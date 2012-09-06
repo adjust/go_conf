@@ -32,6 +32,7 @@ func DropPrivileges(user_name string) {
 			if err != nil {
 				panic(err)
 			}
+			logger.Println("Dropped Privileges to " + usr.Uid)
 		}
 	}
 }
