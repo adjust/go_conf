@@ -10,18 +10,15 @@ import (
 
 var (
 	logger      *log.Logger
-	pg_conf     string
-	redis_host  string
-	redis_db    string
-	environment string
 	config      *yaml.File
+	environment string
 )
 
-func InitLoggerAndConfig() {
+func InitLoggerAndConfig() *log.Logger {
 	//get flags
 	config_file := goopt.String([]string{"-c", "--config"}, "./config/database.yml", "the database.yml")
-	log_file_flag := goopt.String([]string{"-l", "--log"}, "./log/macadamia.log", "where does the log go?")
-	goopt.Summary = "the macadamia server"
+	log_file_flag := goopt.String([]string{"-l", "--log"}, "./log/server.log", "where does the log go?")
+	goopt.Summary = "a go daemon"
 	goopt.Parse(nil)
 
 	//create logger
@@ -42,10 +39,11 @@ func InitLoggerAndConfig() {
 	if environment == "" {
 		environment = "development"
 	}
+	return logger
 }
 
-func InitRedisConfig() {
-	redis_host, err := config.Get("redis_" + environment + ".host")
+func GetRedisConf() (redis_host string, redis_db string) {
+	redis_host, err = config.Get("redis_" + environment + ".host")
 	if err != nil {
 		logger.Panic("missing config parameter: redis host")
 	}
@@ -53,9 +51,11 @@ func InitRedisConfig() {
 	if err != nil {
 		logger.Panic("missing config parameter: redis db")
 	}
+	return
 }
 
-func InitPgConf() {
+func GetPgConf() (pg_conf string) {
+
 	pg_user, err := config.Get("postgres_" + environment + ".user")
 	if err != nil {
 		logger.Panic("missing config parameter: postgres user")
@@ -72,4 +72,5 @@ func InitPgConf() {
 	}
 
 	pg_conf = "user=" + pg_user + " dbname=" + pg_db + " sslmode=disable host=" + pg_host
+	return
 }
