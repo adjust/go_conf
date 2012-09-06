@@ -45,7 +45,7 @@ func InitLoggerAndConfig() {
 }
 
 func InitRedisConfig() {
-	redis_host, err = config.Get("redis_" + environment + ".host")
+	redis_host, err := config.Get("redis_" + environment + ".host")
 	if err != nil {
 		logger.Panic("missing config parameter: redis host")
 	}
