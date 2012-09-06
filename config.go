@@ -9,10 +9,12 @@ import (
 )
 
 var (
-	logger     *log.Logger
-	pg_conf    string
-	redis_host string
-	redis_db   string
+	logger      *log.Logger
+	pg_conf     string
+	redis_host  string
+	redis_db    string
+	environment string
+	config      *yaml.File
 )
 
 func InitLoggerAndConfig() {
@@ -34,13 +36,15 @@ func InitLoggerAndConfig() {
 	if err != nil {
 		logger.Panic("no config file found")
 	}
-	config := yaml.Config(string(c_file))
+	config = yaml.Config(string(c_file))
 
-	environment := os.Getenv("GO_ENV")
+	environment = os.Getenv("GO_ENV")
 	if environment == "" {
 		environment = "development"
 	}
+}
 
+func InitRedisConfig() {
 	redis_host, err = config.Get("redis_" + environment + ".host")
 	if err != nil {
 		logger.Panic("missing config parameter: redis host")
@@ -49,7 +53,9 @@ func InitLoggerAndConfig() {
 	if err != nil {
 		logger.Panic("missing config parameter: redis db")
 	}
+}
 
+func InitPgConf() {
 	pg_user, err := config.Get("postgres_" + environment + ".user")
 	if err != nil {
 		logger.Panic("missing config parameter: postgres user")
