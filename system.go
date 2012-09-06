@@ -27,7 +27,7 @@ func DropPrivileges(user_name string) {
 			if err != nil {
 				panic(err)
 			}
-			id := strconv.Atoi(usr.Uid)
+			id, _ := strconv.Atoi(usr.Uid)
 			err = syscall.Setuid(id)
 			if err != nil {
 				panic(err)
