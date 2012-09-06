@@ -11,6 +11,7 @@ import (
 var (
 	logger      *log.Logger
 	config      *yaml.File
+	port        *string
 	environment string
 )
 
@@ -18,6 +19,7 @@ func InitLoggerAndConfig() *log.Logger {
 	//get flags
 	config_file := goopt.String([]string{"-c", "--config"}, "./config/database.yml", "the database.yml")
 	log_file_flag := goopt.String([]string{"-l", "--log"}, "./log/server.log", "where does the log go?")
+	port := goopt.String([]string{"-p", "--port"}, "8080", "which port to listen on? (only applies to servers)")
 	goopt.Summary = "a go daemon"
 	goopt.Parse(nil)
 
@@ -74,4 +76,8 @@ func GetPgConf() (pg_conf string) {
 
 	pg_conf = "user=" + pg_user + " dbname=" + pg_db + " sslmode=disable host=" + pg_host
 	return
+}
+
+func GetPort() string {
+	return &port
 }
