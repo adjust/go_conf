@@ -20,8 +20,8 @@ func signalCatcher() {
 }
 
 func DropPrivileges(user_name string) {
-	//drop privileges if we are on the servers. testing is done on gentoo systems too.
-	if os.Getenv("GO_ENV") == "production" || os.Getenv("GO_ENV") == "test" {
+	//drop privileges only if we are on the servers.
+	if os.Getenv("GO_ENV") == "production" {
 		if syscall.Getuid() == 0 {
 			usr, err := user.Lookup(user_name)
 			if err != nil {
