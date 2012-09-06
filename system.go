@@ -3,8 +3,6 @@ package go_conf
 import (
 	"os"
 	"os/signal"
-	"os/user"
-	"strconv"
 	"syscall"
 )
 
