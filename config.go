@@ -19,7 +19,7 @@ func InitLoggerAndConfig() *log.Logger {
 	//get flags
 	config_file := goopt.String([]string{"-c", "--config"}, "./config/database.yml", "the database.yml")
 	log_file_flag := goopt.String([]string{"-l", "--log"}, "./log/server.log", "where does the log go?")
-	port := goopt.String([]string{"-p", "--port"}, "8080", "which port to listen on? (only applies to servers)")
+	port = goopt.String([]string{"-p", "--port"}, "8080", "which port to listen on? (only applies to servers)")
 	goopt.Summary = "a go daemon"
 	goopt.Parse(nil)
 
