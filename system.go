@@ -3,6 +3,7 @@ package go_conf
 import (
 	"os"
 	"os/signal"
+	"os/user"
 	"syscall"
 )
 
@@ -17,12 +18,15 @@ func signalCatcher() {
 	}
 }
 
-func DropPrivileges(user string) {
+func DropPrivileges(user_name string) {
 	//drop privileges if we are on the servers. testing is done on gentoo systems too.
 	if os.Getenv("GO_ENV") == "production" || os.Getenv("GO_ENV") == "test" {
 		if syscall.Getuid() == 0 {
-			uid := 42
-			err := syscall.Setuid(uid)
+			usr, err := user.Lookup(user_name)
+			if err != nil {
+				panic(err)
+			}
+			err = syscall.Setuid(usr.Uid)
 			if err != nil {
 				panic(err)
 			}
