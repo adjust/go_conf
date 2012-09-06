@@ -79,5 +79,5 @@ func GetPgConf() (pg_conf string) {
 }
 
 func GetPort() string {
-	return &port
+	return *port
 }
