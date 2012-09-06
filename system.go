@@ -4,6 +4,7 @@ import (
 	"os"
 	"os/signal"
 	"os/user"
+	"strconv"
 	"syscall"
 )
 
@@ -26,7 +27,8 @@ func DropPrivileges(user_name string) {
 			if err != nil {
 				panic(err)
 			}
-			err = syscall.Setuid(usr.Uid)
+			id := strconv.Atoi(usr.Uid)
+			err = syscall.Setuid(id)
 			if err != nil {
 				panic(err)
 			}
