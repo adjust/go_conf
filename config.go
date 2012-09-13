@@ -80,10 +80,26 @@ func GetPgConf() (pg_conf string) {
 
 func GetAmqpConf() (amqp_conf string) {
 	var err error
-	amqp_conf, err = config.Get("amqp_" + environment + ".url")
+	amqp_user, err := config.Get("amqp_" + environment + ".user")
 	if err != nil {
-		logger.Panic("missing config parameter: amqp url")
+		logger.Panic("missing config parameter: amqp user")
 	}
+
+	amqp_pass, err := config.Get("amqp_" + environment + ".pass")
+	if err != nil {
+		logger.Panic("missing config parameter: amqp pass")
+	}
+
+	ampq_host, err := config.Get("amqp_" + environment + ".host")
+	if err != nil {
+		logger.Panic("missing config parameter: amqp host")
+	}
+	amqp_port, err := config.Get("amqp_" + environment + ".port")
+	if err != nil {
+		logger.Panic("missing config parameter: amqp port")
+	}
+
+	amqp_conf = "amqp://" + amqp_user + ":" + amqp_pass + "@" + ampq_host + ":" + amqp_port + "/"
 	return
 }
 
