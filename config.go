@@ -78,6 +78,15 @@ func GetPgConf() (pg_conf string) {
 	return
 }
 
+func GetAmqpConf() (amqp_conf string) {
+	var err error
+	amqp_conf, err = config.Get("amqp_" + environment + ".url")
+	if err != nil {
+		logger.Panic("missing config parameter: amqp url")
+	}
+	return
+}
+
 func GetPort() string {
 	return *port
 }
