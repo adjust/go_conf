@@ -1,6 +1,7 @@
 package go_conf
 
 import (
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
