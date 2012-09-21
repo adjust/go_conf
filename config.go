@@ -1,7 +1,6 @@
 package go_conf
 
 import (
-	"bufio"
 	"flag"
 	"github.com/kylelemons/go-gypsy/yaml"
 	"io/ioutil"
@@ -30,8 +29,7 @@ func initlogAndConfig() {
 	if err != nil {
 		panic("cannot write log")
 	}
-	w := bufio.NewWriter(log_file)
-	log.SetOutput(w)
+	log.SetOutput(log_file)
 	log.SetFlags(5)
 
 	//read the config and build config stuff
