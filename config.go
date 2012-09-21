@@ -32,6 +32,7 @@ func initlogAndConfig() {
 	}
 	w := bufio.NewWriter(log_file)
 	log.SetOutput(w)
+	log.SetFlags(5)
 
 	//read the config and build config stuff
 	c_file, err := ioutil.ReadFile(*config_file)
