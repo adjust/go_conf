@@ -11,13 +11,13 @@ func signalCatcher() {
 	signal.Notify(ch, syscall.SIGHUP)
 	for signal := range ch {
 		if signal == syscall.SIGHUP {
-			logger.Println("received SIGHUP exiting...")
+			log.Println("received SIGHUP exiting...")
 			os.Exit(0)
 		}
 	}
 }
 
-func StartSignalCatcher() {
+func startSignalCatcher() {
 	//react to sighup
 	go signalCatcher()
 }

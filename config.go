@@ -1,7 +1,8 @@
 package go_conf
 
 import (
-	"github.com/droundy/goopt"
+	"bufio"
+	"flag"
 	"github.com/kylelemons/go-gypsy/yaml"
 	"io/ioutil"
 	"log"
@@ -9,96 +10,75 @@ import (
 )
 
 var (
-	logger      *log.Logger
-	config      *yaml.File
-	port        *string
-	environment string
+	config        *yaml.File
+	environment   string
+	config_file   = flag.String("config", "./config/database.yml", "the database.yml")
+	log_file_name = flag.String("log", "./log/server.log", "where does the log go?")
+	port          = flag.String("port", "8080", "which port to listen on? (only applies to servers)")
 )
 
-func InitLoggerAndConfig() *log.Logger {
-	//get flags
-	config_file := goopt.String([]string{"-c", "--config"}, "./config/database.yml", "the database.yml")
-	log_file_flag := goopt.String([]string{"-l", "--log"}, "./log/server.log", "where does the log go?")
-	port = goopt.String([]string{"-p", "--port"}, "8080", "which port to listen on? (only applies to servers)")
-	goopt.Summary = "a go daemon"
-	goopt.Parse(nil)
+func init() {
+	flag.Parse()
+	setEnv()
+	initlogAndConfig()
+	startSignalCatcher()
+}
 
-	//create logger
-	log_file, err := os.OpenFile(*log_file_flag, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0777)
+func initlogAndConfig() {
+	//create log
+	log_file, err := os.OpenFile(*log_file_name, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0777)
 	if err != nil {
 		panic("cannot write log")
 	}
-	logger = log.New(log_file, "", 5)
+	w := bufio.NewWriter(log_file)
+	log.SetOutput(w)
 
 	//read the config and build config stuff
 	c_file, err := ioutil.ReadFile(*config_file)
 	if err != nil {
-		logger.Panic("no config file found")
+		log.Panic("no config file found")
 	}
 	config = yaml.Config(string(c_file))
+}
 
+func GetEnv() string {
+	return environment
+}
+
+func setEnv() {
 	environment = os.Getenv("GO_ENV")
 	if environment == "" {
 		environment = "development"
 	}
-	return logger
+}
+
+func getConfigParameter(prefix, name string) string {
+	param, err := config.Get(prefix + "_" + environment + "." + name)
+	if err != nil {
+		log.Panic("missing config parameter: " + prefix + " " + name)
+	}
+	return param
 }
 
 func GetRedisConf() (redis_host string, redis_db string) {
-	var err error
-	redis_host, err = config.Get("redis_" + environment + ".host")
-	if err != nil {
-		logger.Panic("missing config parameter: redis host")
-	}
-	redis_db, err = config.Get("redis_" + environment + ".db")
-	if err != nil {
-		logger.Panic("missing config parameter: redis db")
-	}
+	redis_host = getConfigParameter("redis", "host")
+	redis_db = getConfigParameter("redis", "db")
 	return
 }
 
 func GetPgConf() (pg_conf string) {
-
-	pg_user, err := config.Get("postgres_" + environment + ".user")
-	if err != nil {
-		logger.Panic("missing config parameter: postgres user")
-	}
-
-	pg_db, err := config.Get("postgres_" + environment + ".db")
-	if err != nil {
-		logger.Panic("missing config parameter: postgres db")
-	}
-
-	pg_host, err := config.Get("postgres_" + environment + ".host")
-	if err != nil {
-		logger.Panic("missing config parameter: postgres host")
-	}
-
+	pg_user = getConfigParameter("postgres", "user")
+	pg_db = getConfigParameter("postgres", "db")
+	pg_host = getConfigParameter("postgres", "host")
 	pg_conf = "user=" + pg_user + " dbname=" + pg_db + " sslmode=disable host=" + pg_host
 	return
 }
 
 func GetAmqpConf() (amqp_conf string) {
-	var err error
-	amqp_user, err := config.Get("amqp_" + environment + ".user")
-	if err != nil {
-		logger.Panic("missing config parameter: amqp user")
-	}
-
-	amqp_pass, err := config.Get("amqp_" + environment + ".pass")
-	if err != nil {
-		logger.Panic("missing config parameter: amqp pass")
-	}
-
-	ampq_host, err := config.Get("amqp_" + environment + ".host")
-	if err != nil {
-		logger.Panic("missing config parameter: amqp host")
-	}
-	amqp_port, err := config.Get("amqp_" + environment + ".port")
-	if err != nil {
-		logger.Panic("missing config parameter: amqp port")
-	}
-
+	amqp_user = getConfigParameter("amqp", "user")
+	amqp_pass = getConfigParameter("amqp", "pass")
+	ampq_host = getConfigParameter("amqp", "host")
+	amqp_port = getConfigParameter("amqp", "port")
 	amqp_conf = "amqp://" + amqp_user + ":" + amqp_pass + "@" + ampq_host + ":" + amqp_port + "/"
 	return
 }
