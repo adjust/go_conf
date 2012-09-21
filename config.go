@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strconv"
 )
 
 var (
@@ -61,7 +62,11 @@ func getConfigParameter(prefix, name string) string {
 
 func GetRedisConf() (redis_host string, redis_db string) {
 	redis_host = getConfigParameter("redis", "host")
-	redis_db = getConfigParameter("redis", "db")
+	db_str = getConfigParameter("redis", "db")
+	redis_db, err := strconv.Atoi(db_str)
+	if err != nil {
+		log.Panic("redis db not an integer!")
+	}
 	return
 }
 
