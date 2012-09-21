@@ -66,21 +66,19 @@ func GetRedisConf() (redis_host string, redis_db string) {
 	return
 }
 
-func GetPgConf() (pg_conf string) {
-	pg_user = getConfigParameter("postgres", "user")
-	pg_db = getConfigParameter("postgres", "db")
-	pg_host = getConfigParameter("postgres", "host")
-	pg_conf = "user=" + pg_user + " dbname=" + pg_db + " sslmode=disable host=" + pg_host
-	return
+func GetPgConf() string {
+	pg_user := getConfigParameter("postgres", "user")
+	pg_db := getConfigParameter("postgres", "db")
+	pg_host := getConfigParameter("postgres", "host")
+	return "user=" + pg_user + " dbname=" + pg_db + " sslmode=disable host=" + pg_host
 }
 
-func GetAmqpConf() (amqp_conf string) {
-	amqp_user = getConfigParameter("amqp", "user")
-	amqp_pass = getConfigParameter("amqp", "pass")
-	ampq_host = getConfigParameter("amqp", "host")
-	amqp_port = getConfigParameter("amqp", "port")
-	amqp_conf = "amqp://" + amqp_user + ":" + amqp_pass + "@" + ampq_host + ":" + amqp_port + "/"
-	return
+func GetAmqpConf() string {
+	amqp_user := getConfigParameter("amqp", "user")
+	amqp_pass := getConfigParameter("amqp", "pass")
+	ampq_host := getConfigParameter("amqp", "host")
+	amqp_port := getConfigParameter("amqp", "port")
+	return "amqp://" + amqp_user + ":" + amqp_pass + "@" + ampq_host + ":" + amqp_port + "/"
 }
 
 func GetPort() string {
