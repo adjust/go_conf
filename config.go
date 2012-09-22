@@ -15,6 +15,7 @@ var (
 	config_file   = flag.String("config", "./config/database.yml", "the database.yml")
 	log_file_name = flag.String("log", "./log/server.log", "where does the log go?")
 	port          = flag.String("port", "8080", "which port to listen on? (only applies to servers)")
+	shard         = flag.Int64("shard", 1, "the id of this proxy (used for sharding)")
 )
 
 func init() {
@@ -87,4 +88,8 @@ func GetAmqpConf() string {
 
 func GetPort() string {
 	return *port
+}
+
+func GetShard() int64 {
+	return *shard
 }
