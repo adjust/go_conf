@@ -10,6 +10,7 @@ import (
 )
 
 var (
+	exitHandler   ExitHandler
 	config        *yaml.File
 	environment   string
 	config_file   = flag.String("config", "./config/database.yml", "the database.yml")
@@ -19,6 +20,7 @@ var (
 )
 
 func init() {
+	exitHandler = &StandardHandler{}
 	flag.Parse()
 	setEnv()
 	initlogAndConfig()
