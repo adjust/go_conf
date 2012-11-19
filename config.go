@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"strconv"
 )
 
 var (
@@ -15,8 +14,6 @@ var (
 	environment   string
 	config_file   = flag.String("config", "./config/database.yml", "the database.yml")
 	log_file_name = flag.String("log", "./log/server.log", "where does the log go?")
-	port          = flag.String("port", "8080", "which port to listen on? (only applies to servers)")
-	shard         = flag.Int64("shard", 1, "the id of this proxy (used for sharding)")
 )
 
 func init() {
@@ -61,47 +58,4 @@ func getConfigParameter(prefix, name string) string {
 		log.Panic("missing config parameter: " + prefix + " " + name)
 	}
 	return param
-}
-
-func GetRedisConf() (redis_host string, redis_db int) {
-	redis_host = getConfigParameter("redis", "host")
-	db_str := getConfigParameter("redis", "db")
-	redis_db, err := strconv.Atoi(db_str)
-	if err != nil {
-		log.Panic("redis db not an integer!")
-	}
-	return
-}
-
-func GetMasterRedisConf() (redis_host string, redis_db int) {
-	redis_host = getConfigParameter("master_redis", "host")
-	db_str := getConfigParameter("master_redis", "db")
-	redis_db, err := strconv.Atoi(db_str)
-	if err != nil {
-		log.Panic("master redis db not an integer!")
-	}
-	return
-}
-
-func GetPgConf() string {
-	pg_user := getConfigParameter("postgres", "user")
-	pg_db := getConfigParameter("postgres", "db")
-	pg_host := getConfigParameter("postgres", "host")
-	return "user=" + pg_user + " dbname=" + pg_db + " sslmode=disable host=" + pg_host
-}
-
-func GetAmqpConf() string {
-	amqp_user := getConfigParameter("amqp", "user")
-	amqp_pass := getConfigParameter("amqp", "pass")
-	ampq_host := getConfigParameter("amqp", "host")
-	amqp_port := getConfigParameter("amqp", "port")
-	return "amqp://" + amqp_user + ":" + amqp_pass + "@" + ampq_host + ":" + amqp_port + "/"
-}
-
-func GetPort() string {
-	return *port
-}
-
-func GetShard() int64 {
-	return *shard
 }
