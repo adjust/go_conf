@@ -16,7 +16,7 @@ var (
 	config_file   = flag.String("config", "./config/database.yml", "the database.yml")
 	log_file_name = flag.String("log", "./log/server.log", "where does the log go?")
 	port          = flag.String("port", "8080", "which port to listen on? (only applies to servers)")
-	shard         = flag.Int64("shard", 1, "the id of this proxy (used for sharding)")
+	shard         = flag.Int64("shard", 0, "the id of this proxy (used for sharding)")
 )
 
 func init() {
@@ -28,7 +28,7 @@ func init() {
 }
 
 func initlogAndConfig() {
-	//create log
+	//create log   
 	log_file, err := os.OpenFile(*log_file_name, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0777)
 	if err != nil {
 		panic("cannot write log")
@@ -103,5 +103,9 @@ func GetPort() string {
 }
 
 func GetShard() int64 {
+	if *shard == 0 {
+		log.Panic("no valid shard id set!")
+		os.Exit(1)
+	}
 	return *shard
 }
